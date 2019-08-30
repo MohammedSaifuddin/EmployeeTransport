@@ -9,7 +9,9 @@ import java.util.List;
 
 import org.etas.springmvc.bean.Booking;
 import org.etas.springmvc.bean.BookingRequestStatus;
+import org.etas.springmvc.bean.Cab;
 import org.etas.springmvc.dao.BookingDAO;
+import org.etas.springmvc.dao.CabDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ public class BookingService {
 
     @Autowired
     BookingDAO bookingDAO;
+
+    @Autowired
+    CabService cabService;
 
     @Transactional
     public List<Booking> getAllBookings() {
@@ -88,10 +93,9 @@ public class BookingService {
                     if (((bookingTime.after(timeCompareDay1_10pm.getTime())) && (bookingTime.before(timeCompareUpto_12am.getTime())))
                             || ((bookingTime.after(timeCompare_from12am.getTime()))
                                     && (bookingTime.before(timeCompare_upto1am.getTime())))) {
-
                         bookingDAO.addBooking(booking);
-
-                        bookingStatus = "Request Id is " + Integer.toString(booking.getId());
+                        int bookingId = getBookingId();
+                        bookingStatus = "Request Id is " + bookingId;
 
                         model.addObject("ERROR_CODE", bookingStatus);
                         model.setViewName("bookingDetails");
@@ -165,8 +169,42 @@ public class BookingService {
         }
     }
 
+    public int assignCab() {
+        int cabId = 0;
+        boolean cabStatus = false;
+        int cabVacancy = 0;
+        List<Cab> cabList = cabService.getAllCabs();
+        for (Cab element : cabList) {
+            cabId = element.getCabId();
+            cabStatus = element.isCabStatus();
+            cabVacancy = element.getVacancy();
+            if (cabId != 0 && cabStatus == true && cabVacancy != 0) {
+                System.out.println("=-------------------------------------------=");
+                System.out.println("--Booking cab Id = ----" + cabId);
+                cabVacancy = cabVacancy - 1;
+                element.setVacancy(cabVacancy);
+                System.out.println("--Booking cab Vacancy = ----" + cabVacancy);
+                break;
+            }
+
+        }
+        return cabId;
+    }
+
+    public int getBookingId() {
+        int bookingId = 0;
+        List<Booking> bookingList = bookingDAO.getAllBookings();
+        for (Booking element : bookingList) {
+            bookingId = element.getId();
+        }
+        System.out.println("Booking Id  " + bookingId);
+        return bookingId;
+
+    }
+
     @Transactional
     public List<BookingRequestStatus> getRequestStatusOfBooking() {
+
         return bookingDAO.getRequestStatusOfBooking();
     }
 

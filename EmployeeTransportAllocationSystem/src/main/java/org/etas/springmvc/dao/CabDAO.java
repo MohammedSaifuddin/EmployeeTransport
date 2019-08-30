@@ -2,7 +2,10 @@ package org.etas.springmvc.dao;
 
 import java.util.List;
 
+import org.etas.springmvc.bean.Booking;
 import org.etas.springmvc.bean.Cab;
+import org.etas.springmvc.service.BookingService;
+import org.etas.springmvc.service.CabService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,6 +18,12 @@ public class CabDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @Autowired
+    BookingService bookingService;
+
+    @Autowired
+    CabService cabService;
+    
     public void setSessionFactory(SessionFactory sf) {
         this.sessionFactory = sf;
     }
@@ -58,8 +67,19 @@ public class CabDAO {
 
     public void setCabStatusToUnavailable(int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Query qry = session.createQuery(" update Cab set cabStatus = 0 where id= " + id);
+        int alternateCabId=0;
+        int bookingId=0;
+        List<Booking> bookingList = bookingService.getAllBookings();
+        for (Booking element : bookingList) {
+            if (element.getCab_id() == id) {
+                 alternateCabId = bookingService.assignCab();
+                 bookingId = element.getId();
+            }
+        }
+        Query qry = session.createQuery(" update Booking set cab_id ="+alternateCabId+" where id= " + bookingId);
         qry.executeUpdate();
+        Query qry1 = session.createQuery(" update Cab set cabStatus = 0 where id= " + id);
+        qry1.executeUpdate();   
     }
 
 }

@@ -37,13 +37,13 @@ public class Cab {
     @Column(name = "vacancy")
     @NotNull
     @Size(min = 1, max = 4)
-    String vacancy;
+    int vacancy;
 
     public Cab() {
         super();
     }
 
-    public Cab(int cabId, String registrationNumber, int driverId, boolean cabStatus, String comments, String vacancy) {
+    public Cab(int cabId, String registrationNumber, int driverId, boolean cabStatus, String comments, int vacancy) {
         super();
         this.cabId = cabId;
         this.registrationNumber = registrationNumber;
@@ -93,11 +93,11 @@ public class Cab {
         this.comments = comments;
     }
 
-    public String getVacancy() {
+    public int getVacancy() {
         return vacancy;
     }
 
-    public void setVacancy(String vacancy) {
+    public void setVacancy(int vacancy) {
         this.vacancy = vacancy;
     }
 

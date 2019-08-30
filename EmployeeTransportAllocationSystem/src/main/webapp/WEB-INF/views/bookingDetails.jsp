@@ -65,6 +65,10 @@ td, th {
 			<td><form:label path="empoyeeId">Employee Id</form:label></td>
 			<td><form:input path="empoyeeId" size="30" maxlength="30"></form:input></td>
 			</tr>
+<%--  			</tr>
+			<td><form:label path="cab_id"></form:label></td>
+			<td><form:input path="cab_id" size="30" maxlength="30" value="6"></form:input></td>
+			</tr>  --%>
 			<tr>
 				<td colspan="2"><input type="submit" class="blue-button" /></td>
 			</tr>
@@ -84,6 +88,7 @@ td, th {
 				<th width="120">Date and Time Of Journey</th>
 				<th width="120">Employee Id</th>
 				<th width="120">Booking Status</th>
+				<th width="120">Cab Id</th>
 				<th width="60">Cancel</th>
 			</tr>
 			<c:forEach items="${listOfBookings}" var="booking">
@@ -93,6 +98,7 @@ td, th {
 					<td>${booking.dateTimeOfJourney}</td>
 					<td>${booking.empoyeeId}</td>
 					<td>${booking.bookingStatusOfJourney}</td>
+					<td>${booking.cab_id}</td>
 					<td><a href="<c:url value='/cancelBooking/${booking.id}' />">Cancel</a></td>
 				</tr>
 			</c:forEach>

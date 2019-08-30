@@ -33,18 +33,22 @@ public class Booking {
 
     @Column(name = "bookingStatusOfJourney")
     boolean bookingStatusOfJourney;
+    
+    @Column(name = "cab_id")
+    int cab_id;
 
     public Booking() {
         super();
     }
 
-    public Booking(int id, String sourceLocation, Timestamp dateTimeOfJourney, String empoyeeId, boolean bookingStatusOfJourney) {
+    public Booking(int id, String sourceLocation, Timestamp dateTimeOfJourney, String empoyeeId, boolean bookingStatusOfJourney,int cab_id) {
         super();
         this.id = id;
         this.sourceLocation = sourceLocation;
         this.dateTimeOfJourney = dateTimeOfJourney;
         this.empoyeeId = empoyeeId;
         this.bookingStatusOfJourney = bookingStatusOfJourney;
+        this.cab_id=cab_id;
     }
 
     public boolean isBookingStatusOfJourney() {
@@ -56,7 +60,7 @@ public class Booking {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -85,5 +89,15 @@ public class Booking {
 
     public void setEmpoyeeId(String empoyeeId) {
         this.empoyeeId = empoyeeId;
+    }
+
+    
+    public int getCab_id() {
+        return cab_id;
+    }
+
+    
+    public void setCab_id(int cab_id) {
+        this.cab_id = cab_id;
     }
 }

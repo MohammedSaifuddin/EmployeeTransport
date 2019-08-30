@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.etas.springmvc.bean.Booking;
 import org.etas.springmvc.bean.BookingRequestStatus;
+import org.etas.springmvc.service.BookingService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,6 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Repository
 public class BookingDAO {
+
+    @Autowired
+    BookingService bookingService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -35,12 +39,19 @@ public class BookingDAO {
 
     public Booking addBooking(Booking booking) {
         Session session = this.sessionFactory.getCurrentSession();
-        session.persist(booking);
+
+        int cabId = bookingService.assignCab();
+        String sql = String.format(
+                "insert into BOOKING(id,sourceLocation, dateTimeOfJourney, employeeId, bookingStatusOfJourney, cab_id) VALUES(%s,'%s','%s',%s,%s,%s);",
+                booking.getId(), booking.getSourceLocation(), booking.getDateTimeOfJourney(), booking.getEmpoyeeId(), 1, cabId);
+        session.createSQLQuery(sql).executeUpdate();
         return booking;
+
     }
 
     public void cancelBooking(Booking booking, int id, ModelAndView model) {
         Session session = this.sessionFactory.getCurrentSession();
+
         Query qry = session.createQuery(" update Booking set bookingStatusOfJourney = 0 where id= " + id);
         model.setViewName("bookingDetails");
         qry.executeUpdate();
@@ -48,7 +59,7 @@ public class BookingDAO {
 
     public Object getBookingTime(Booking booking, ModelAndView model, int id) {
         Session session = this.sessionFactory.getCurrentSession();
-        Query qry = session.createQuery("select dateTimeOfJoursney from Booking where id= " + id);
+        Query qry = session.createQuery("select dateTimeOfJourney from Booking where id= " + id);
         return qry.uniqueResult();
     }
 
@@ -56,9 +67,8 @@ public class BookingDAO {
         Session session = this.sessionFactory.getCurrentSession();
         // requestId requestStatus comments bookingId sourceLocation
         // dateTimeOfJourney requestCreationDate requestGenerator
-        List<BookingRequestStatus> listOFRequestStatus = session
-                .createQuery(
-                        "select b.id, b.bookingStatusOfJourney, c.comments , b.sourceLocation , b.dateTimeOfJourney from Booking b, Cab c ")
+        List<BookingRequestStatus> listOFRequestStatus = session.createQuery(
+                "select b.id, b.bookingStatusOfJourney, c.comments , b.sourceLocation , b.dateTimeOfJourney from Booking as  b, Cab as c ")
                 .list();
         System.out.println("========QUERY FOR REQUEST STATUS-----" + listOFRequestStatus.toString());
         return listOFRequestStatus;
